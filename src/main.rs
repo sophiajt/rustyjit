@@ -22,7 +22,7 @@ impl JitMemory {
             libc::posix_memalign(&mut _contents, PAGE_SIZE, size);
             libc::mprotect(_contents, size, libc::PROT_EXEC | libc::PROT_READ | libc::PROT_WRITE);
 
-            memset(_contents, 0xc3, size);  // for now, prepoluate with 'RET'
+            memset(_contents, 0xc3, size);  // for now, prepopulate with 'RET'
 
             contents = mem::transmute(_contents);
         }
