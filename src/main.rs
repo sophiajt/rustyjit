@@ -48,7 +48,7 @@ impl IndexMut<usize> for JitMemory {
 fn run_jit() -> (fn() -> i64) {
     let mut jit : JitMemory = JitMemory::new(1);
 
-    jit[0] = 0x48;  // mov RAX, 0
+    jit[0] = 0x48;  // mov RAX, 0x3
     jit[1] = 0xc7;
     jit[2] = 0xc0;
     jit[3] = 0x3;
