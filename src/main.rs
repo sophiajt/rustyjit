@@ -18,7 +18,7 @@ impl JitMemory {
         let contents : *mut u8;
         unsafe {
             let size = num_pages * PAGE_SIZE;
-            let mut _contents : *mut libc::c_void = libc::malloc(size);
+            let mut _contents : *mut libc::c_void = mem::uninitialized();
             libc::posix_memalign(&mut _contents, PAGE_SIZE, size);
             libc::mprotect(_contents, size, libc::PROT_EXEC | libc::PROT_READ | libc::PROT_WRITE);
 
