@@ -1,5 +1,6 @@
-# rustyjit
-A JIT experiment in Rust
+# A simple Rust JIT
+
+rustyjit, a simple JIT in Rust
 
 To build: ```cargo build```
 
