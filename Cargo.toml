@@ -4,3 +4,6 @@ version = "0.1.0"
 
 [dependencies]
 libc = "0.2.2"
+winapi = "0.2"
+kernel32-sys = "0.2"
+

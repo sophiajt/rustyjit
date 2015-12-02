@@ -1,10 +1,13 @@
 extern crate libc;
+extern crate winapi;
+extern crate kernel32;
 
 use std::mem;
 use std::ops::{Index, IndexMut};
 
 extern {
     fn memset(s: *mut libc::c_void, c: libc::uint32_t, n: libc::size_t) -> *mut libc::c_void;
+    fn _aligned_malloc(size: libc::size_t, alignment: libc::size_t) -> *mut libc::c_void;
 }
 
 const PAGE_SIZE: usize = 4096;
@@ -18,9 +21,10 @@ impl JitMemory {
         let contents : *mut u8;
         unsafe {
             let size = num_pages * PAGE_SIZE;
-            let mut _contents : *mut libc::c_void = libc::malloc(size);
-            libc::posix_memalign(&mut _contents, PAGE_SIZE, size);
-            libc::mprotect(_contents, size, libc::PROT_EXEC | libc::PROT_READ | libc::PROT_WRITE);
+            let mut _contents : *mut libc::c_void = _aligned_malloc(size, PAGE_SIZE);
+            let mut _previous_protect : u32 = 0;
+            kernel32::VirtualProtect(_contents as *mut std::os::raw::c_void, size as u64, 
+                winapi::winnt::PAGE_EXECUTE_READWRITE, ((&mut _previous_protect) as *mut u32) as u32);
 
             memset(_contents, 0xc3, size);  // for now, prepopulate with 'RET'
 
@@ -41,7 +45,7 @@ impl Index<usize> for JitMemory {
 
 impl IndexMut<usize> for JitMemory {
     fn index_mut(&mut self, _index: usize) -> &mut u8 {
-        unsafe {&mut *self.contents.offset(_index as isize) }
+        unsafe { &mut *self.contents.offset(_index as isize) }
     }
 }
 
