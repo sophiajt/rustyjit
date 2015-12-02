@@ -22,7 +22,7 @@ mod memory {
     }
 
     pub unsafe fn make_executable(addr: *mut libc::c_void, size: libc::size_t) {
-        let mut _previous_protect : *mut u32 = &mut 0u32 as *mut u32;
+        let mut _previous_protect : *mut u32 = ::std::mem::uninitialized();
         kernel32::VirtualProtect(addr as *mut ::std::os::raw::c_void, size as u64, 
             winapi::winnt::PAGE_EXECUTE_READWRITE, _previous_protect as u32);
     }
@@ -33,7 +33,7 @@ mod memory {
     extern crate libc;
 
     pub unsafe fn aligned_malloc(size: libc::size_t, alignment: libc::size_t) -> *mut libc::c_void {
-        let mut _contents : *mut libc::c_void = ::std::ptr::null_mut();
+        let mut _contents : *mut libc::c_void = ::std::mem::uninitialized();
         libc::posix_memalign(&mut _contents, alignment, size);
 
         _contents
